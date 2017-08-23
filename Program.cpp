@@ -1,18 +1,18 @@
 /*
- * DParser.cpp
+ * Program.cpp
  *
  *  Created on: 23 aug. 2017
  *      Author: timmy
  */
 
-#include "DParser.h"
+#include "Program.h"
 
-D_Parser::D_Parser() {
+Program::Program() {
 	// TODO Auto-generated constructor stub
 
 }
 
-D_Parser::~D_Parser() {
+Program::~Program() {
 	// TODO Auto-generated destructor stub
 }
 
