@@ -43,7 +43,7 @@ Token * Lexer::next_token(d_string * code) {
 	if(**code == '\0')
 		return new Token("", TOKEN_CODE_END);
 
-	// Check if integer or number
+	// Check if integer or float number
 	if(isdigit(**code)) {
 		value = Lexer::get_number(code, &type);
 		return new Token(value, type);
@@ -59,8 +59,19 @@ Token * Lexer::next_token(d_string * code) {
 	if((type = this->get_keyword(code, &value)))
 		return new Token(value, type);
 
-	// Some kind of name for function or variable
-	return new Token(value, TOKEN_NAME);
+	// Name for function or variable
+	if(this->get_name(code, &value))
+		return new Token(value, TOKEN_NAME);
+
+	// Error, not recognized
+	{
+		std::stringstream err;
+		err << "unexpected '" << value << "', on line " << this->line_nr << ":" << this->character << ".";
+
+		ERROR(new Error(ERRNO_UNK, err.str()));
+	}
+
+	return new Token(0, 0);
 }
 
 // Get an integer or floating point number
@@ -104,8 +115,11 @@ const std::string Lexer::get_string(d_string * code) {
 
 // Get keyword, return type
 const d_uint Lexer::get_keyword(d_string * code, std::string * value) {
+	d_string start;
 	std::string val;
 	std::map<std::string, d_uint>::iterator it;
+
+	start = *code;
 
 	// Fetch the word
 	while(isalnum(**code))
@@ -114,8 +128,10 @@ const d_uint Lexer::get_keyword(d_string * code, std::string * value) {
 	*value = val;
 
 	// Check whether word is a keyword
-	if((it = KEYWORDS->find(val)) == KEYWORDS->end())
+	if((it = KEYWORDS->find(val)) == KEYWORDS->end()) {
+		*code = start;
 		return 0;
+	}
 
 	return it->second;
 }

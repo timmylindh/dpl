@@ -11,7 +11,7 @@
 int main() {
 	Compiler compiler;
 
-	compiler.compile((d_string) "10 20\n \"sdfsdf\" if if");
+	compiler.compile((d_string) "10 20\n \"sdfsdf\" if if xsd() dfg");
 	return 0;
 }
 
