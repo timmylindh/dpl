@@ -59,15 +59,8 @@ Token * Lexer::next_token(d_string * code) {
 	if((type = this->get_keyword(code, &value)))
 		return new Token(value, type);
 
-	// Error
-	{
-		std::stringstream err;
-		err << "unexpected '" << value << "', on line " << this->line_nr << ":" << this->character << ".";
-
-		ERROR(new Error(ERRNO_NO_KEY, err.str()));
-	}
-
-	return new Token(0, 0);
+	// Some kind of name for function or variable
+	return new Token(value, TOKEN_NAME);
 }
 
 // Get an integer or floating point number

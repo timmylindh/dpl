@@ -19,9 +19,10 @@ using std::map;
 #define TOKEN_CODE_END 2
 #define TOKEN_INT 3
 #define TOKEN_FLOAT 4
+#define TOKEN_NAME 5
 
 // Keyword tokens
-#define TOKEN_IF 5
+#define TOKEN_IF 6
 
 class Token {
 
