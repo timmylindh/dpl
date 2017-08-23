@@ -9,6 +9,7 @@
 #define LEXER_H_
 
 #include <map>
+#include <iostream>
 
 #include "../dtypes.h"
 #include "../Token.h"
@@ -18,15 +19,19 @@ using std::map;
 class Lexer {
 
 	public:
+		virtual Token * next_token(d_string * code);
+
 		Lexer();
 		virtual ~Lexer();
 
 	private:
-		map<const d_string, d_uint> * KEYWORDS;
+		map<const std::string, d_uint> * KEYWORDS;
+		d_uint line_nr;
+		d_uint character;
 
-		Token next_token(d_string * code);
-		const d_string get_number(d_string * code, d_uint * type);
-		const d_string get_string(d_string * code);
+		const std::string get_number(d_string * code, d_uint * type);
+		const std::string get_string(d_string * code);
+		const d_uint get_keyword(d_string * code, std::string * value);
 };
 
 #endif /* LEXER_H_ */

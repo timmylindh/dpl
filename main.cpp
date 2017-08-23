@@ -11,7 +11,7 @@
 int main() {
 	Compiler compiler;
 
-	compiler.compile((d_string) "x = 10");
+	compiler.compile((d_string) "10 20\n \"sdfsdf\" if sdf");
 	return 0;
 }
 

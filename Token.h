@@ -9,6 +9,7 @@
 #define TOKEN_H_
 
 #include <map>
+#include <iostream>
 #include "dtypes.h"
 
 using std::map;
@@ -25,12 +26,12 @@ using std::map;
 class Token {
 
 	public:
-		d_string value;
+		std::string value;
 		d_uint type;
 
-		static void get_keywords(map<const d_string, d_uint> * KEYWORDS);
+		static void get_keywords(map<const std::string, d_uint> * KEYWORDS);
 
-		Token(const d_string value, d_uint type);
+		Token(std::string value, d_uint type);
 		virtual ~Token();
 };
 

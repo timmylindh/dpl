@@ -5,6 +5,7 @@
  *      Author: timmy
  */
 
+#include <iostream>
 #include "Parser.h"
 
 Parser::Parser(Lexer * lexer) {
@@ -17,6 +18,11 @@ Parser::~Parser() {
 
 // Parse a single, or a set of instructions
 d_uint Parser::parse(d_string code) {
+	Token * tok;
+
+	while((tok = this->lexer->next_token(&code))->type != TOKEN_CODE_END)
+		std::cout << tok->value << " | " << tok->type << std::endl;
+
 	return 0;
 }
 
