@@ -16,9 +16,12 @@
 Lexer::Lexer() {
 	// Get all reserved keywords
 	this->KEYWORDS = new map<const std::string, d_uint>;
-	Token::get_keywords(this->KEYWORDS);
+	this->OPERATORS = new map<const std::string, d_uint>;
 
-	this->line_nr = 0;
+	Token::get_keywords(this->KEYWORDS);
+	Token::get_operators(this->OPERATORS);
+
+	this->line_nr = 1;
 	this->character = 0;
 }
 
@@ -35,6 +38,8 @@ Token * Lexer::next_token(d_string * code) {
 	while(isspace(**code)) {
 		if(**code == '\n')
 			this->line_nr++;
+
+		this->character++;
 
 		(*code)++;
 	}
@@ -55,18 +60,18 @@ Token * Lexer::next_token(d_string * code) {
 		return new Token(value, TOKEN_STRING);
 	}
 
-	// Check if keyword
-	if((type = this->get_keyword(code, &value)))
+	// Get operator
+	if((type = this->get_operator(code, &value)))
 		return new Token(value, type);
 
-	// Name for function or variable
-	if(this->get_name(code, &value))
-		return new Token(value, TOKEN_NAME);
+	// Check if keyword or name
+	if((type = this->get_keyword_name(code, &value)))
+		return new Token(value, type);
 
 	// Error, not recognized
 	{
 		std::stringstream err;
-		err << "unexpected '" << value << "', on line " << this->line_nr << ":" << this->character << ".";
+		err << "unexpected '" << **code << "', on line " << this->line_nr << ":" << this->character << ".";
 
 		ERROR(new Error(ERRNO_UNK, err.str()));
 	}
@@ -113,25 +118,54 @@ const std::string Lexer::get_string(d_string * code) {
 	return value;
 }
 
-// Get keyword, return type
-const d_uint Lexer::get_keyword(d_string * code, std::string * value) {
+// Get operator
+const d_uint Lexer::get_operator(d_string * code, std::string * value) {
 	d_string start;
+	std::string  tmp, val;
+	std::map<std::string, d_uint>::iterator it;
+	d_uint type;
+
+	start = *code;
+	tmp += **code;
+
+	// Fetch the whole operator, >= for instance
+	while((it = OPERATORS->find(tmp)) != OPERATORS->end()) {
+		val += *((*code)++);
+		tmp += **code;
+
+		type = it->second;
+	}
+
+	// No matching operator
+	if(val.empty()) {
+		*code = start;
+		return 0;
+	}
+
+	*value = val;
+	return type;
+
+}
+
+// Get keyword or var/func name, return type
+const d_uint Lexer::get_keyword_name(d_string * code, std::string * value) {
 	std::string val;
 	std::map<std::string, d_uint>::iterator it;
 
-	start = *code;
-
 	// Fetch the word
-	while(isalnum(**code))
+	while(isalnum(**code) || **code == '_')
 		val += *((*code)++);
 
 	*value = val;
 
 	// Check whether word is a keyword
-	if((it = KEYWORDS->find(val)) == KEYWORDS->end()) {
-		*code = start;
-		return 0;
-	}
+	if((it = KEYWORDS->find(val)) != KEYWORDS->end())
+		return it->second;
 
-	return it->second;
+	if(val.empty())
+		return 0;
+
+	// Function or variable
+	return TOKEN_NAME;
 }
+

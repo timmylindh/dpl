@@ -26,12 +26,14 @@ class Lexer {
 
 	private:
 		map<const std::string, d_uint> * KEYWORDS;
+		map<const std::string, d_uint> * OPERATORS;
 		d_uint line_nr;
 		d_uint character;
 
 		const std::string get_number(d_string * code, d_uint * type);
 		const std::string get_string(d_string * code);
-		const d_uint get_keyword(d_string * code, std::string * value);
+		const d_uint get_keyword_name(d_string * code, std::string * value);
+		const d_uint get_operator(d_string * code, std::string * value);
 };
 
 #endif /* LEXER_H_ */
