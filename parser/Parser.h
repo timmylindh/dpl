@@ -15,15 +15,13 @@
 class Parser {
 
 	public:
-		d_uint parse(d_string code);
-		Program * get_program();
+		d_uint parse(d_string code, Program * program);
 
 		Parser(Lexer * lexer);
 		virtual ~Parser();
 
 	private:
 		Lexer * lexer;
-		Program * program;
 
 };
 

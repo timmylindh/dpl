@@ -21,6 +21,7 @@ class Compiler {
 		Lexer * lexer;
 		Parser * parser;
 		Translator * translator;
+		Program * program_tree;
 
 	public:
 		Compiler();

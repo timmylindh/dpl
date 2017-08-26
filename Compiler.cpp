@@ -27,16 +27,14 @@ Compiler::~Compiler() {
 void Compiler::compile(d_string code) {
 	d_uint pos;
 	d_string translation;
-	Program * program_tree;
 
 	this->code = code;
 
 	// Parse a single instruction, or a set of instructions
-	while((pos = this->parser->parse(this->code)))
+	while((pos = this->parser->parse(this->code, this->program_tree)))
 		this->code += pos;
 
-	// Get program tree
-	program_tree = this->parser->get_program();
+	// Translate program
 	translation = this->translator->translate(program_tree);
 
 	std::cout << translation << std::endl;

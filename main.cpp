@@ -11,7 +11,7 @@
 int main() {
 	Compiler compiler;
 
-	compiler.compile((d_string) "? (x + y == 2) ->");
+	compiler.compile((d_string) "func : [x, y] -> {}\\");
 	return 0;
 }
 

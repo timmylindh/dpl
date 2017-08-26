@@ -38,6 +38,11 @@ void Token::get_operators(map<const std::string, d_uint> * OPERATORS) {
 			{(const d_string) "[", TOKEN_OP_RBRACK},
 			{(const d_string) "]", TOKEN_OP_LBRACK},
 			{(const d_string) "==", TOKEN_OP_EQUALS},
-			{(const d_string) "->", TOKEN_OP_EQUALS}
+			{(const d_string) "->", TOKEN_OP_EQUALS},
+			{(const d_string) ".", TOKEN_OP_DOT},
+			{(const d_string) "{", TOKEN_OP_RCURL},
+			{(const d_string) "}", TOKEN_OP_LCURL},
+			{(const d_string) ",", TOKEN_OP_COMMA},
+			{(const d_string) ":", TOKEN_OP_COLON}
 	};
 }

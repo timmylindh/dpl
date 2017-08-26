@@ -71,7 +71,7 @@ Token * Lexer::next_token(d_string * code) {
 	// Error, not recognized
 	{
 		std::stringstream err;
-		err << "unexpected '" << **code << "', on line " << this->line_nr << ":" << this->character << ".";
+		err << "unknown '" << **code << "', on line " << this->line_nr << ":" << this->character << ".";
 
 		ERROR(new Error(ERRNO_UNK, err.str()));
 	}

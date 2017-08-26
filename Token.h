@@ -36,6 +36,11 @@ using std::map;
 #define TOKEN_OP_LBRACK 17
 #define TOKEN_OP_EQUALS 18
 #define TOKEN_OP_DO 19
+#define TOKEN_OP_DOT 20
+#define TOKEN_OP_RCURL 21
+#define TOKEN_OP_LCURL 22
+#define TOKEN_OP_COMMA 23
+#define TOKEN_OP_COLON 24
 
 // Keyword tokens
 

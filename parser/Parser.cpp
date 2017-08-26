@@ -17,16 +17,11 @@ Parser::~Parser() {
 }
 
 // Parse a single, or a set of instructions
-d_uint Parser::parse(d_string code) {
+d_uint Parser::parse(d_string code, Program * program) {
 	Token * tok;
 
 	while((tok = this->lexer->next_token(&code))->type != TOKEN_CODE_END)
 		std::cout << tok->value << " | " << tok->type << std::endl;
 
 	return 0;
-}
-
-// Get the current program tree
-Program * Parser::get_program() {
-	return this->program;
 }
