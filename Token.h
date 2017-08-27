@@ -43,6 +43,7 @@ using std::map;
 #define TOKEN_OP_COLON 24
 
 // Keyword tokens
+#define TOKEN_KEY_RETURN 25
 
 class Token {
 

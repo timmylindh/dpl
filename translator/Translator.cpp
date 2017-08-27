@@ -18,6 +18,6 @@ Translator::~Translator() {
 
 // Translate a program tree to C
 d_string Translator::translate(Program * program_tree) {
-	return "Code is translated.";
+	return (d_string) "Code is translated.";
 }
 

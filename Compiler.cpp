@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "Compiler.h"
-#include "Program.h"
+#include "parser/Program.h"
 
 Compiler::Compiler() {
 	this->code = NULL;
@@ -17,6 +17,8 @@ Compiler::Compiler() {
 	this->lexer = new Lexer();
 	this->parser = new Parser(this->lexer);
 	this->translator = new Translator();
+
+	this->program_tree = new Program(NULL);
 }
 
 Compiler::~Compiler() {

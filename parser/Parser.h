@@ -10,7 +10,7 @@
 
 #include "../dtypes.h"
 #include "../lexer/Lexer.h"
-#include "../Program.h"
+#include "Program.h"
 
 class Parser {
 

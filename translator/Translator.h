@@ -9,7 +9,7 @@
 #define TRANSLATOR_H_
 
 #include "../dtypes.h"
-#include "../Program.h"
+#include "../parser/Program.h"
 
 class Translator {
 

@@ -19,7 +19,9 @@ Token::~Token() {
 
 // Fetch all reserved keywords
 void Token::get_keywords(map<const std::string, d_uint> * KEYWORDS) {
-
+	(*KEYWORDS) = {
+			{(const d_string) "ret", TOKEN_KEY_RETURN}
+	};
 }
 
 // Fetch all reserved operators
