@@ -1,2 +1,2 @@
 # dpl
-discrete programming langugae
+discrete programming language
