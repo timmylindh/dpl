@@ -11,6 +11,9 @@
 #include "Program.h"
 #include "../dtypes.h"
 
+// Instruction types
+#define INSTRUCTION_ASSIGNMENT 1
+
 class Instruction : public Program {
 
 	public:
@@ -20,4 +23,14 @@ class Instruction : public Program {
 
 };
 
+// Assignment instruction
+class I_Assignment : public Instruction {
+
+	public:
+		d_uint assign_type;
+		string left, right;
+
+		I_Assignment(Program * parent, d_uint type) : Instruction(parent, type) {}
+
+};
 #endif /* PARSER_INSTRUCTION_H_ */

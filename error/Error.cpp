@@ -24,7 +24,7 @@ std::string Error::get_error() {
 	return this->error;
 }
 
-// Parse an error, cease execetuon
+// Parse an error, cease execution
 void ERROR(Error * err) {
 	std::cout << "Error: " << err->get_error() << std::endl;
 	exit(0);

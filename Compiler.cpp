@@ -33,8 +33,7 @@ void Compiler::compile(d_string code) {
 	this->code = code;
 
 	// Parse a single instruction, or a set of instructions
-	while((pos = this->parser->parse(this->code, this->program_tree)))
-		this->code += pos;
+	while(this->parser->parse(&this->code, this->program_tree));
 
 	// Translate program
 	translation = this->translator->translate(program_tree);

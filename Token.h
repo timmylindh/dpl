@@ -41,9 +41,16 @@ using std::map;
 #define TOKEN_OP_LCURL 22
 #define TOKEN_OP_COMMA 23
 #define TOKEN_OP_COLON 24
+#define TOKEN_OP_MULTASSIGN 25
+#define TOKEN_OP_DIVASSIGN 26
+#define TOKEN_OP_MINUSASSIGN 27
+#define TOKEN_OP_PLUSASSIGN 28
 
 // Keyword tokens
-#define TOKEN_KEY_RETURN 25
+#define TOKEN_KEY_RETURN 29
+
+// Check whether assign operation
+#define ASSIGN_OP(x) (x == TOKEN_OP_ASSIGN) || (x == TOKEN_OP_MULTASSIGN) || (x == TOKEN_OP_DIVASSIGN) || (x == TOKEN_OP_MINUSASSIGN) || (x == TOKEN_OP_PLUSASSIGN)
 
 class Token {
 

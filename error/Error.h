@@ -15,6 +15,7 @@
 // Error numbers (error_nr)
 #define ERRNO_STR_DELIM 1 // Missing " delimiter in string
 #define ERRNO_UNK 2 // Keyword or sign not recognized, unknown
+#define ERRNO_SYNTAX 3 // Incorrect syntax
 
 // Fatal error, stop execution
 class Error {

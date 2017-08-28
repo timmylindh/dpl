@@ -11,7 +11,7 @@
 int main() {
 	Compiler compiler;
 
-	compiler.compile((d_string) "func : [x, y] -> { ret (x + y). }");
+	compiler.compile((d_string) "var = 10.");
 	return 0;
 }
 
