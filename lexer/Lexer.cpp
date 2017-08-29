@@ -83,13 +83,27 @@ Token * Lexer::next_token(d_string * code) {
 const std::string Lexer::get_number(d_string * code, d_uint * type) {
 	std::string value;
 	*type = TOKEN_INT;
+	d_string s;
 
-	// Fetch the integer or floating point number
-	while(isdigit(**code) || **code == '.') {
-		if(**code == '.')
-			*type = TOKEN_FLOAT;
-
+	// Fetch the integer
+	while(isdigit(**code))
 		value += *((*code)++);
+
+	s = *code;
+
+	// Check if float
+	if(**code == '.') {
+		if(isdigit(*(*code + 1))) {
+			value += *((*code)++);
+
+			while(isdigit(**code))
+				value += *((*code)++);
+
+			*type = TOKEN_FLOAT;
+		}
+
+		else
+			*code = s;
 	}
 
 	return value;

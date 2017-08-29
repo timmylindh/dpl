@@ -52,6 +52,12 @@ using std::map;
 // Check whether assign operation
 #define ASSIGN_OP(x) (x == TOKEN_OP_ASSIGN) || (x == TOKEN_OP_MULTASSIGN) || (x == TOKEN_OP_DIVASSIGN) || (x == TOKEN_OP_MINUSASSIGN) || (x == TOKEN_OP_PLUSASSIGN)
 
+// Check if arithmetic operator
+#define IS_ARITH(x) ((x == TOKEN_OP_PLUS) || (x == TOKEN_OP_MINUS) || (x == TOKEN_OP_MULT) || (x == TOKEN_OP_DIV))
+
+// Check if numeric
+#define IS_NUM(x) ((x == TOKEN_INT) || (x == TOKEN_FLOAT))
+
 class Token {
 
 	public:

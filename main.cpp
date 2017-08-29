@@ -11,7 +11,7 @@
 int main() {
 	Compiler compiler;
 
-	compiler.compile((d_string) "var = 10.");
+	compiler.compile((d_string) "var = (10*(10.02+2)).");
 	return 0;
 }
 

@@ -29,6 +29,7 @@ class Parser {
 		Lexer * lexer;
 		Program * program;
 
+		d_uint parse_expr(d_string * code, string * expr); // Parse a expression, return the type
 		void ins_assignment(d_string * code, string name, d_uint type); // Assignment instruction
 		void ins_function_def(d_string * code, string name); // Function definiton instruction
 };

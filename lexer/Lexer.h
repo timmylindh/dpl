@@ -19,6 +19,9 @@ using std::map;
 class Lexer {
 
 	public:
+		d_uint line_nr;
+		d_uint character;
+
 		virtual Token * next_token(d_string * code);
 
 		Lexer();
@@ -27,8 +30,6 @@ class Lexer {
 	private:
 		map<const std::string, d_uint> * KEYWORDS;
 		map<const std::string, d_uint> * OPERATORS;
-		d_uint line_nr;
-		d_uint character;
 
 		const std::string get_number(d_string * code, d_uint * type);
 		const std::string get_string(d_string * code);
