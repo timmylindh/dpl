@@ -14,11 +14,11 @@ Compiler::Compiler() {
 	this->code = NULL;
 
 	// Initialize compiler objects
-	this->lexer = new Lexer();
-	this->parser = new Parser(this->lexer);
-	this->translator = new Translator();
-
 	this->program_tree = new Program(NULL);
+
+	this->lexer = new Lexer();
+	this->parser = new Parser(this->lexer, this->program_tree);
+	this->translator = new Translator();
 }
 
 Compiler::~Compiler() {
