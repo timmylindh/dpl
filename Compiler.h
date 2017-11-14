@@ -1,32 +1,31 @@
 /*
- * DCompiler.h
+ * Compiler.h
  *
- *  Created on: 23 aug. 2017
- *      Author: timmy
+ *  Created on: 13 nov. 2017
+ *      Author: timmy.lindholm
  */
 
 #ifndef COMPILER_H_
 #define COMPILER_H_
 
-#include "dtypes.h"
-#include "lexer/Lexer.h"
-#include "parser/Parser.h"
-#include "translator/Translator.h"
+#include "parser.h"
 
 class Compiler {
 
-	private:
-		d_string code;
+public:
+	Compiler();
+	virtual ~Compiler();
 
-		Lexer * lexer;
-		Parser * parser;
-		Translator * translator;
-		Program * program_tree;
+	// Called to compile a source dpl file
+	int compile(char * file_name);
 
-	public:
-		Compiler();
-		void compile(d_string code);
-		virtual ~Compiler();
+private:
+	Parser * parser;
+	char * buffer;
+
+	// Open a file and put the contents in a buffer, might throw an error
+	char * read_file(char * file_name);
+
 
 };
 

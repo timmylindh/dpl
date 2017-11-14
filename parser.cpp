@@ -7,7 +7,7 @@
 
 #include "parser.h"
 
-Parser::parser() {
+Parser::Parser() {
 
 	this->lexer = new Lexer();
 }

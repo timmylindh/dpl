@@ -1,44 +1,70 @@
 /*
- * DCompiler.cpp
+ * Compiler.cpp
  *
- *  Created on: 23 aug. 2017
- *      Author: timmy
+ *  Created on: 13 nov. 2017
+ *      Author: timmy.lindholm
  */
+
+#include <cstdio>
+#include <cstdlib>
 
 #include <iostream>
 
-#include "Compiler.h"
-#include "parser/Program.h"
+#include "error.h"
+#include "compiler.h"
+
+#define READ_FILE_ERROR 1
 
 Compiler::Compiler() {
-	this->code = NULL;
 
-	// Initialize compiler objects
-	this->program_tree = new Program(NULL);
-
-	this->lexer = new Lexer();
-	this->parser = new Parser(this->lexer, this->program_tree);
-	this->translator = new Translator();
+	this->parser = new Parser();
+	this->buffer = NULL;
 }
 
 Compiler::~Compiler() {
-
+	// TODO Auto-generated destructor stub
 }
 
-// Start code compilation
-void Compiler::compile(d_string code) {
-	d_uint pos;
-	d_string translation;
+// Compile a file specified by the argument
+int Compiler::compile(char * file_name) {
+	try {
+		this->buffer = this->read_file(file_name);
+	} catch(int e) {
+		ERROR(1, "%s", "failed");
+		exit(0);
+	}
 
-	this->code = code;
+	printf("%s\n", this->buffer);
 
-	// Parse a single instruction, or a set of instructions
-	while(this->parser->parse(&this->code, this->program_tree));
-
-	// Translate program
-	translation = this->translator->translate(program_tree);
-
-	std::cout << translation << std::endl;
+	return 1;
 }
 
+/* Opens a file and reads the content into a buffer
+ * Throws an error if file could not be opened
+ */
+char * Compiler::read_file(char * file_name) {
+	FILE * file_stream;
+	char * buffer, * pbuffer;
 
+	if(! (file_stream = fopen(file_name, "r")))
+		throw READ_FILE_ERROR;
+
+	buffer = (char *) malloc(200 * sizeof(char));
+	pbuffer = buffer;
+
+	int n_total_read = 0;
+	int n_read = 0;
+
+	while((n_read = fread(pbuffer, sizeof(char), 200, file_stream)) == 200) {
+		n_total_read += n_read;
+
+		buffer = (char *) realloc(buffer, n_total_read * sizeof(char));
+		pbuffer = buffer + n_total_read;
+	}
+
+	pbuffer += n_read;
+	pbuffer[n_total_read] = '\0';
+
+	fclose(file_stream);
+	return buffer;
+}
