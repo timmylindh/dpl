@@ -20,10 +20,15 @@ class Lexer {
 
 public:
 	Lexer();
-	virtual ~Lexer();
 
 	// Return the next token in char buffer
 	Token * next_token();
+
+	// Sets the internal buffer to the code pointed to by argument
+	void set_input_code(char * buffer);
+
+private:
+	char * buffer;
 };
 
 #endif /* LEXER_H_ */

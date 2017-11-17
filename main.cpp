@@ -9,7 +9,7 @@
 
 int main() {
 	Compiler compiler;
-	compiler.compile((char * const) "test.dpsl");
+	compiler.compile((char * const) "test.dpl");
 }
 
 

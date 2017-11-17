@@ -5,14 +5,21 @@
  *      Author: timmy.lindholm
  */
 
+#include <iostream>
+
 #include "lexer.h"
 
 Lexer::Lexer() {
 
+	buffer = NULL;
 
 }
 
-Lexer::~Lexer() {
-
+/*
+ * Sets the internal code buffer to the string pointed to by
+ * [buffer].
+ */
+void Lexer::set_input_code(char * buffer) {
+	this->buffer = buffer;
 }
 
