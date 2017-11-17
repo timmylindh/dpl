@@ -10,8 +10,8 @@
 
 #include <iostream>
 
-#include "error.h"
 #include "compiler.h"
+#include "error.h"
 
 #define READ_FILE_ERROR 1
 
@@ -27,14 +27,18 @@ Compiler::~Compiler() {
 
 // Compile a file specified by the argument
 int Compiler::compile(char * file_name) {
+
 	try {
 		this->buffer = this->read_file(file_name);
 	} catch(int e) {
-		ERROR(1, "%s", "failed");
-		exit(0);
+		ERROR(T_CRIT, "failed to read from file %s.", file_name);
 	}
 
-	printf("%s\n", this->buffer);
+	std::cout << "INPUT: " << this->buffer << std::endl;
+
+	// Pass buffer to parser and parse the file
+	this->parser->set_input_code(this->buffer);
+	this->parser->parse();
 
 	return 1;
 }
