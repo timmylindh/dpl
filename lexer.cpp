@@ -6,13 +6,25 @@
  */
 
 #include <iostream>
+#include <cctype>
 
 #include "lexer.h"
 
 Lexer::Lexer() {
 
 	buffer = NULL;
+	pt = NULL;
+	last_token = NULL;
+}
 
+// Returns the next token in input buffer
+Token * Lexer::next_token() {
+	char * pt;
+
+	pt = this->pt;
+
+	// Integer or float
+	if(isdigit(*pt));
 }
 
 /*
@@ -21,5 +33,6 @@ Lexer::Lexer() {
  */
 void Lexer::set_input_code(char * buffer) {
 	this->buffer = buffer;
+	this->pt = this->buffer;
 }
 
