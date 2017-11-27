@@ -23,7 +23,12 @@ Parser::Parser() {
  * Pointer.
 */
 void Parser::parse(char * buffer) {
+	Token * tok;
 
+	std::cout << "OUTPUT:" << std::endl;
+
+	while((tok = this->lexer->next_token())->type != TOK_NULL)
+		std::cout << tok->type << " : " << tok->value << std::endl;
 }
 
 // Calls the parse function with the internal buffer as argument
