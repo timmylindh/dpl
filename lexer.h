@@ -52,6 +52,10 @@
 #define TOK_ELSE_IF 28
 
 #define TOK_DOT 29
+#define TOK_COLON 30
+
+// Whether token is of assignment type
+#define IS_ASSIGNMENT(type) (type == TOK_EQUAL)
 
 // Defines a single token
 class Token {
@@ -97,12 +101,16 @@ private:
 
 	// A list of tokens and their corresponding token ids
 	std::unordered_map<std::string, int> symbols;
+	std::unordered_map<std::string, int> keywords;
 
 	// Used to parse a string for an integer or a float
 	std::string * get_number(int &type);
 
 	// Get a string
 	std::string * get_string(char delimiter, int &type);
+
+	// Get a reserved keyword or variable name
+	std::string * get_keyword(int &type);
 
 	// Get a symbol, for instance a + or a - sign
 	std::string * get_symbol(int &type);

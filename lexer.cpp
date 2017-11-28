@@ -79,14 +79,15 @@ Token * Lexer::next_token() {
 		value = get_string(*pt++, type);
 
 	// Keyword
-	/*else if(isalpha(*pt))
-		value = get_keyword(type);*/
+	else if(isalpha(*pt))
+		value = get_keyword(type);
 
 	// Symbol
 	else
 		value = get_symbol(type);
 
-	return new Token(value, type);
+	last_token = new Token(value, type);
+	return last_token;
 }
 
 // Fetch an integer or a float, return the corresponding string
@@ -99,7 +100,7 @@ std::string * Lexer::get_number(int &type) {
 
 	while(isdigit(*pt) || *pt == '.') {
 		if(*pt == '.') {
-			if(type == TOK_FLOAT)
+			if(type == TOK_FLOAT || (! isdigit(*(pt + 1))))
 				break;
 
 			type = TOK_FLOAT;
@@ -130,9 +131,31 @@ std::string * Lexer::get_string(char delimiter, int &type) {
 	return value;
 }
 
+/* Fetches a keyword or variable name, based on whether the name is a reserved
+ * keyword or not.
+ */
+std::string * Lexer::get_keyword(int &type) {
+	std::string * search;
+	std::unordered_map<std::string, int>::iterator it;
+
+	search = new std::string;
+
+	// Get name
+	while(isalnum(*pt) || *pt == '_')
+		*search += *pt++;
+
+	// Keyword or name
+	if((it = keywords.find(*search)) == symbols.end())
+		type = TOK_NAME;
+	else
+		type = it->second;
+
+	return search;
+}
+
 // Fetches a symbol based on whether it is in the symbols map or not
 std::string * Lexer::get_symbol(int &type) {
-	std::string value, search;
+	std::string search;
 	std::unordered_map<std::string, int>::iterator it, _it;
 
 	search = *pt;

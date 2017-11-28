@@ -37,7 +37,7 @@ int Compiler::compile(char * file_name) {
 
 	// Pass buffer to parser and parse the file
 	this->parser->set_input_code(this->buffer);
-	this->parser->parse();
+	program = this->parser->parse();
 
 	return 1;
 }

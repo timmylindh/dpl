@@ -9,6 +9,7 @@
 #define COMPILER_H_
 
 #include "parser.h"
+#include "mem/program.h"
 
 class Compiler {
 
@@ -22,6 +23,9 @@ public:
 private:
 	Parser * parser;
 	char * buffer;
+
+	// Main program
+	Program * program;
 
 	// Open a file and put the contents in a buffer, might throw an error
 	char * read_file(char * file_name);
