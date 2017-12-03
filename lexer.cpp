@@ -47,6 +47,8 @@ Lexer::Lexer() {
 	symbols["|?"] = TOK_ELSE_IF;
 
 	symbols["."] = TOK_DOT;
+	symbols[":"] = TOK_COLON;
+	symbols[","] = TOK_COMMA;
 }
 
 // Returns the next token in input buffer

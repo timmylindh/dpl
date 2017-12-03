@@ -9,17 +9,20 @@
 #define MEM_VARIABLE_H_
 
 #include <iostream>
+#include <vector>
+
+#include "../lexer.h"
 
 class Variable {
 
 public:
-	Variable(char * name, char * value, int type);
+	Variable(char * name, std::vector<Token *> * value, int type);
 
 	// The name of the variable
 	char * name;
 
 	// The value of the variable
-	void * value;
+	std::vector<Token *> * value;
 
 	// The type of the variable
 	int type;
@@ -30,10 +33,10 @@ public:
 class Argument : public Variable {
 
 public:
-	Argument(char * name, char * value, int type);
+	Argument(char * name, std::vector<Token *> * value, int type);
 
 	// Default value for argument
-	char * default_value;
+	std::vector<Token *> * default_value;
 
 	// Default type for argument
 	int default_type;

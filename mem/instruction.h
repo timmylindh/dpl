@@ -8,13 +8,28 @@
 #ifndef MEM_INSTRUCTION_H_
 #define MEM_INSTRUCTION_H_
 
+class Function;
+
+#define TYPE_FUNCTIONCALL 1
+
 class Instruction {
 
 public:
-	Instruction();
+	Instruction(int type);
 
 	// The type of instruction
-	int type;
+	const int type;
+
+};
+
+// Defines a call to a function
+class FunctionCall : public Instruction {
+
+public:
+	FunctionCall(Function * function);
+
+	// The function assoiciated with the instruction
+	Function * function;
 
 };
 

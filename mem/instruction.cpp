@@ -7,9 +7,11 @@
 
 #include "instruction.h"
 
-Instruction::Instruction() {
-
-	this->type = 0;
+Instruction::Instruction(int type) : type(type) {
 
 }
 
+// Initialize a function call instruction
+FunctionCall::FunctionCall(Function * function) : Instruction(TYPE_FUNCTIONCALL) {
+	this->function = function;
+}

@@ -8,7 +8,7 @@
 #include "variable.h"
 
 // Initialize a new variable
-Variable::Variable(char * name, char * value, int type) {
+Variable::Variable(char * name, std::vector<Token *> * value, int type) {
 
 	this->name = name;
 	this->value = value;
@@ -17,7 +17,7 @@ Variable::Variable(char * name, char * value, int type) {
 }
 
 // Initialize a new argument
-Argument::Argument(char * name, char * value, int type)
+Argument::Argument(char * name, std::vector<Token *> * value, int type)
 : Variable(name, value, type) {
 
 	this->default_value = NULL;

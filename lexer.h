@@ -53,6 +53,7 @@
 
 #define TOK_DOT 29
 #define TOK_COLON 30
+#define TOK_COMMA 31
 
 // Whether token is of assignment type
 #define IS_ASSIGNMENT(type) (type == TOK_EQUAL)

@@ -6,6 +6,9 @@
  */
 
 #include <stack>
+#include <vector>
+
+#include "lexer.h"
 #include "expression.h"
 
 namespace expr {
@@ -17,9 +20,13 @@ namespace expr {
 	} Operator;
 
 	// Convert infix expression to postfix expression
-	char * infix_to_post(char * infix) {
+	char * infix_to_post(std::vector<Token *> tokens) {
+		std::stack<Token> op_stack;
 
-
+		// Loop through tokens
+		for(auto token : tokens) {
+			std::cout << token->value;
+		}
 	}
 
 }

@@ -34,6 +34,9 @@ public:
 	// Get the next instruction
 	Instruction * get_next_instruction();
 
+	// Push a new instruction on to the instruction queue
+	void push_instruction(Instruction * instruction);
+
 private:
 
 	// Defines a set of variables in the current program scope
@@ -51,7 +54,9 @@ public:
 	GlobalProgram();
 
 	// Get the function in global program with [name]
+	// return 0 if no function was found
 	Function * get_function(std::string name);
+	Function * get_function(char * name);
 
 private:
 
