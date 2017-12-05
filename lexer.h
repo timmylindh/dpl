@@ -55,8 +55,14 @@
 #define TOK_COLON 30
 #define TOK_COMMA 31
 
+#define TOK_ANY_TYPE 32
+#define TOK_AT 33
+
 // Whether token is of assignment type
 #define IS_ASSIGNMENT(type) (type == TOK_EQUAL)
+
+// Whether token is of operator type
+#define IS_OPERATOR(type) (type == TOK_PLUS || type == TOK_MINUS || type == TOK_MULT||type==TOK_DIV)
 
 // Defines a single token
 class Token {

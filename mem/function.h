@@ -9,7 +9,7 @@
 #define MEM_FUNCTION_H_
 
 #include <vector>
-
+#include <unordered_map>
 #include "variable.h"
 #include "program.h"
 
@@ -25,12 +25,16 @@ public:
 	// return 0 if last
 	Argument * get_next_argument();
 
+	// Check if the function has a certain return type
+	// return 0 if not
+	int check_return_type(int type);
+
 private:
 	// The arguments that the function takes
 	std::vector<Argument *> * arguments;
 
 	// The possible return types of the function
-	std::vector<int> * return_types;
+	std::unordered_map<int, void *> * return_types;
 
 	// Arguments index
 	int args_index;

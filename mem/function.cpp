@@ -11,7 +11,7 @@ Function::Function(Program * parent_program) : Program(parent_program) {
 
 	this->name = NULL;
 	this->arguments = new std::vector<Argument *>;
-	this->return_types = new std::vector<int>;
+	this->return_types = new std::unordered_map<int, void *>;
 	this->args_index = 0;
 }
 
@@ -24,4 +24,13 @@ Argument * Function::get_next_argument() {
 	}
 
 	return arguments->at(args_index++);
+}
+
+// Determine whether a function has a certain return type or not
+// return 0 if not
+int Function::check_return_type(int type) {
+	if(return_types->find(type) == return_types->end())
+		return 0;
+
+	return 1;
 }

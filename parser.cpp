@@ -84,8 +84,16 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 	Token * tok;
 	std::stack<Token *> op_stack;
 	std::vector<Token *> * expression;
+	std::unordered_map<int, int> operators;
+
+	operators[TOK_MULT] = 3;
+	operators[TOK_DIV] = 3;
+	operators[TOK_PLUS] = 2;
+	operators[TOK_MINUS] = 2;
+	operators[TOK_LEFT_PAR] = 1;
 
 	expression = new std::vector<Token *>;
+	type = TOK_NULL;
 
 	// Loop through tokens until dot or end of line
 	tok = lexer->next_token();
@@ -94,21 +102,97 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 
 		// Numeric operand
 		if(tok->type == TOK_INT || tok->type == TOK_FLOAT) {
+			if(tok->type == TOK_FLOAT)
+				type = TOK_FLOAT;
+			else if(tok->type == TOK_INT && type != TOK_FLOAT)
+				type = TOK_INT;
+
 			expression->push_back(tok);
 		}
 
 		// Function or variable operand
 		else if(tok->type == TOK_NAME) {
-			auto func_name = tok->value;
+			Token * name = tok;
 			tok = lexer->next_token();
 
 			// Function
 			if(tok->type == TOK_LEFT_PAR) {
-				auto func = parse_function_call(func_name);
+				auto func = parse_function_call(name->value);
+
+				// Check if function has a certain return type
+				if(type != TOK_NULL) {
+					if(! func->check_return_type(type))
+						ERROR(T_CRIT, "invalid return value of function %s on line %d.", name->value, lexer->n_lines);
+				}
+
+				else
+					type = TOK_ANY_TYPE;
+
+				expression->push_back(new Token((char * const) "@", TOK_AT));
 			}
+
+			// Variable
+			else {
+				auto var = program->get_variable(name->value);
+
+				// Determine variable type
+				if(type != TOK_NULL) {
+					if(var->type != type)
+						ERROR(T_CRIT, "invalid type of variable %s on line %d.", name->value, lexer->n_lines);
+				}
+
+				else
+					type = TOK_ANY_TYPE;
+			}
+
+			expression->push_back(name);
+		}
+
+		else if(tok->type == TOK_LEFT_PAR)
+			op_stack.push(tok);
+
+		else if(tok->type == TOK_RIGHT_PAR) {
+			Token * op;
+			op = NULL;
+
+			// Pop stack until corresponding left paranthesis is found
+			while(! op_stack.empty() && (op = op_stack.top())->type != TOK_LEFT_PAR) {
+				expression->push_back(op);
+				op_stack.pop();
+			}
+
+			// No mathing paranthesis
+			if(op_stack.empty() && op != NULL && op->type != TOK_LEFT_PAR)
+				ERROR(T_CRIT, "faulty expression on line %d", lexer->n_lines);
+
+			expression->push_back(op);
+		}
+
+		// Operator
+		else if(IS_OPERATOR(tok->type)) {
+			Token * op;
+			int prec;
+
+			op = NULL;
+			prec = operators[tok->type];
+
+			// Add operators with higher precedence
+			while(! op_stack.empty() && prec >= operators[(op = op_stack.top())->type]) {
+				expression->push_back(op);
+				op_stack.pop();
+			}
+
+			op_stack.push(tok);
 		}
 	}
 
+	// Add remaining operators to expression
+	while(! op_stack.empty()) {
+		expression->push_back(op_stack.top());
+		op_stack.pop();
+	}
+
+	return expression;
 }
 
 /* Parse a call to a function, output an error if function for some reason

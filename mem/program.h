@@ -28,7 +28,8 @@ public:
 	 */
 	Program * parent_program;
 
-	// Get the variable [name] in global or current program
+	// Get the variable [name] in current program
+	// return 0 if it does not exist
 	Variable * get_variable(std::string name);
 
 	// Get the next instruction

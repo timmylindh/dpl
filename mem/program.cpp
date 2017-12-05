@@ -20,6 +20,17 @@ void Program::push_instruction(Instruction * instruction) {
 	instructions->push(instruction);
 }
 
+// Get the variable [name] in current program
+// return 0 if it does not exist
+Variable * Program::get_variable(std::string name) {
+	std::unordered_map<std::string, Variable *>::iterator it;
+
+	if((it = variables->find(name)) == variables->end())
+		return 0;
+
+	return it->second;
+}
+
 // Initialize a new global program
 GlobalProgram::GlobalProgram() : Program(NULL) {
 	this->functions = new std::unordered_map<std::string, Function *>();
