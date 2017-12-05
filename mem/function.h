@@ -9,7 +9,7 @@
 #define MEM_FUNCTION_H_
 
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include "variable.h"
 #include "program.h"
 
@@ -29,12 +29,15 @@ public:
 	// return 0 if not
 	int check_return_type(int type);
 
+	// Returns the first return type
+	int get_return_type();
+
 private:
 	// The arguments that the function takes
 	std::vector<Argument *> * arguments;
 
 	// The possible return types of the function
-	std::unordered_map<int, void *> * return_types;
+	std::map<int, void *> * return_types;
 
 	// Arguments index
 	int args_index;

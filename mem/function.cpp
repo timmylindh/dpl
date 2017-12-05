@@ -11,7 +11,7 @@ Function::Function(Program * parent_program) : Program(parent_program) {
 
 	this->name = NULL;
 	this->arguments = new std::vector<Argument *>;
-	this->return_types = new std::unordered_map<int, void *>;
+	this->return_types = new std::map<int, void *>;
 	this->args_index = 0;
 }
 
@@ -33,4 +33,9 @@ int Function::check_return_type(int type) {
 		return 0;
 
 	return 1;
+}
+
+// Returns the first return type
+int Function::get_return_type() {
+	return return_types->begin()->first;
 }

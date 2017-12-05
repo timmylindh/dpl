@@ -8,7 +8,7 @@
 #include "variable.h"
 
 // Initialize a new variable
-Variable::Variable(char * name, std::vector<Token *> * value, int type) {
+Variable::Variable(const char * name, std::vector<Token *> * value, int type) {
 
 	this->name = name;
 	this->value = value;

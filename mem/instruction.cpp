@@ -15,3 +15,9 @@ Instruction::Instruction(int type) : type(type) {
 FunctionCall::FunctionCall(Function * function) : Instruction(TYPE_FUNCTIONCALL) {
 	this->function = function;
 }
+
+// Initialize a assignment instruction
+Assignment::Assignment(Variable * var, int operation) : Instruction(TYPE_ASSIGNMENT) {
+	this->variable = var;
+	this->operation = operation;
+}

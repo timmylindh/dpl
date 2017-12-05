@@ -31,6 +31,11 @@ Variable * Program::get_variable(std::string name) {
 	return it->second;
 }
 
+// Add variable [name] to current program
+void Program::push_variable(Variable * var) {
+	variables->insert(std::pair<std::string, Variable *>(std::string(var->name), var));
+}
+
 // Initialize a new global program
 GlobalProgram::GlobalProgram() : Program(NULL) {
 	this->functions = new std::unordered_map<std::string, Function *>();

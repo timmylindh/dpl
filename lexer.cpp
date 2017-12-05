@@ -22,12 +22,12 @@ Lexer::Lexer() {
 	symbols["/"] = TOK_DIV;
 	symbols["%"] = TOK_MOD;
 
-	symbols["("] = TOK_RIGHT_PAR;
-	symbols[")"] = TOK_LEFT_PAR;
-	symbols["["] = TOK_RIGHT_SBRACK;
-	symbols["]"] = TOK_LEFT_SBRACK;
-	symbols["{"] = TOK_RIGHT_CBRACK;
-	symbols["}"] = TOK_LEFT_CBRACK;
+	symbols[")"] = TOK_RIGHT_PAR;
+	symbols["("] = TOK_LEFT_PAR;
+	symbols["]"] = TOK_RIGHT_SBRACK;
+	symbols["["] = TOK_LEFT_SBRACK;
+	symbols["}"] = TOK_RIGHT_CBRACK;
+	symbols["{"] = TOK_LEFT_CBRACK;
 	symbols["|"] = TOK_PIPE;
 
 	symbols["V"] = TOK_UNI_QUANT;

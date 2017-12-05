@@ -37,45 +37,67 @@ void Parser::parse(Program * program) {
 	this->program = program;
 	tok = lexer->next_token();
 
-	// Entry points for keywords and instructions
-	switch(tok->type) {
+	while(tok->type != TOK_NULL) {
+		// Entry points for keywords and instructions
+		switch(tok->type) {
 
-	// Function or variable name
-	case TOK_NAME:
-		const char * name;
+		// Function or variable name
+		case TOK_NAME:
+			const char * name;
 
-		name = tok->value;
-		tok = lexer->next_token();
+			name = tok->value;
+			tok = lexer->next_token();
 
-		// Assignment operation
-		if(IS_ASSIGNMENT(tok->type)) {
-			parse_assignment_operation(name, tok->type);
+			// Assignment operation
+			if(IS_ASSIGNMENT(tok->type)) {
+				parse_assignment_operation(name, tok->type);
+			}
+
+			// Function call
+			else if(tok->type == TOK_RIGHT_PAR);
+
+			break;
+
+		// If or else if
+		case TOK_IF:
+		case TOK_ELSE_IF:
+			break;
+
+		// While loop
+		case TOK_WHILE:
+			break;
+
+		// For all
+		case TOK_UNI_QUANT:
+			break;
+
 		}
 
-		// Function call
-		else if(tok->type == TOK_RIGHT_PAR);
-
-		break;
-
-	// If or else if
-	case TOK_IF:
-	case TOK_ELSE_IF:
-		break;
-
-	// While loop
-	case TOK_WHILE:
-		break;
-
-	// For all
-	case TOK_UNI_QUANT:
-		break;
-
+		tok = lexer->next_token();
 	}
 }
 
 // Parse an assignment operation and create the corresponding memory layout
 void Parser::parse_assignment_operation(const char * name, int assign_type) {
+	std::vector<Token *> * expression;
+	int type;
 
+	// Get the expression
+	expression = parse_expression(type);
+
+	for(auto x : *expression) {
+		std::cout << x->value;
+	}
+
+	std::cout << std::endl;
+
+	// Create the variable and add it to the current program
+	Variable * variable = new Variable(name, expression, type);
+	program->push_variable(variable);
+
+	// Create assignment instruction
+	Assignment * assignment = new Assignment(variable, assign_type);
+	program->push_instruction(assignment);
 }
 
 // Convert infix expression to postfix expression for convenience
@@ -104,9 +126,15 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 		if(tok->type == TOK_INT || tok->type == TOK_FLOAT) {
 			if(tok->type == TOK_FLOAT)
 				type = TOK_FLOAT;
-			else if(tok->type == TOK_INT && type != TOK_FLOAT)
+			else if(tok->type == TOK_INT && type != TOK_FLOAT && type != TOK_STRING)
 				type = TOK_INT;
 
+			expression->push_back(tok);
+		}
+
+		// String operand
+		else if(tok->type == TOK_STRING) {
+			type = TOK_STRING;
 			expression->push_back(tok);
 		}
 
@@ -121,12 +149,12 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 
 				// Check if function has a certain return type
 				if(type != TOK_NULL) {
-					if(! func->check_return_type(type))
+					if((! func->check_return_type(type)) && type != TOK_STRING)
 						ERROR(T_CRIT, "invalid return value of function %s on line %d.", name->value, lexer->n_lines);
 				}
 
 				else
-					type = TOK_ANY_TYPE;
+					type = func->get_return_type();
 
 				expression->push_back(new Token((char * const) "@", TOK_AT));
 			}
@@ -135,17 +163,22 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 			else {
 				auto var = program->get_variable(name->value);
 
+				// Determine if variable exists
+				if(! var)
+					ERROR(T_CRIT, "undefined variable %s on line %d.", name->value, lexer->n_lines);
+
 				// Determine variable type
 				if(type != TOK_NULL) {
-					if(var->type != type)
+					if(var->type != type && type != TOK_STRING)
 						ERROR(T_CRIT, "invalid type of variable %s on line %d.", name->value, lexer->n_lines);
 				}
 
 				else
-					type = TOK_ANY_TYPE;
+					type = var->type;
 			}
 
 			expression->push_back(name);
+			continue;
 		}
 
 		else if(tok->type == TOK_LEFT_PAR)
@@ -156,16 +189,18 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 			op = NULL;
 
 			// Pop stack until corresponding left paranthesis is found
-			while(! op_stack.empty() && (op = op_stack.top())->type != TOK_LEFT_PAR) {
+			while((! op_stack.empty()) && (op = op_stack.top())->type != TOK_LEFT_PAR) {
 				expression->push_back(op);
 				op_stack.pop();
 			}
 
-			// No mathing paranthesis
-			if(op_stack.empty() && op != NULL && op->type != TOK_LEFT_PAR)
+			// Matching paranthesis
+			if(op != NULL && op->type == TOK_LEFT_PAR)
+				op_stack.pop();
+
+			else
 				ERROR(T_CRIT, "faulty expression on line %d", lexer->n_lines);
 
-			expression->push_back(op);
 		}
 
 		// Operator
@@ -177,14 +212,24 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 			prec = operators[tok->type];
 
 			// Add operators with higher precedence
-			while(! op_stack.empty() && prec >= operators[(op = op_stack.top())->type]) {
+			while(! op_stack.empty() && prec <= operators[(op = op_stack.top())->type]) {
 				expression->push_back(op);
 				op_stack.pop();
 			}
 
 			op_stack.push(tok);
 		}
+
+		// Invalid token
+		else
+			ERROR(T_CRIT, "unexpected '%s' on line %d", tok->value, lexer->n_lines);
+
+		tok = lexer->next_token();
 	}
+
+	// Check if no ending delimiter
+	if(tok->type == TOK_NULL)
+		ERROR(T_CRIT, "unexpected end of file on line %d", lexer->n_lines);
 
 	// Add remaining operators to expression
 	while(! op_stack.empty()) {

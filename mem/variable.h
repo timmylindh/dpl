@@ -16,10 +16,10 @@
 class Variable {
 
 public:
-	Variable(char * name, std::vector<Token *> * value, int type);
+	Variable(const char * name, std::vector<Token *> * value, int type);
 
 	// The name of the variable
-	char * name;
+	const char * name;
 
 	// The value of the variable
 	std::vector<Token *> * value;

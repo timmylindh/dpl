@@ -8,9 +8,14 @@
 #ifndef MEM_INSTRUCTION_H_
 #define MEM_INSTRUCTION_H_
 
+#include <vector>
+#include "variable.h"
+
 class Function;
+class Token;
 
 #define TYPE_FUNCTIONCALL 1
+#define TYPE_ASSIGNMENT 2
 
 class Instruction {
 
@@ -30,6 +35,17 @@ public:
 
 	// The function assoiciated with the instruction
 	Function * function;
+
+};
+
+// Defines a variable assignment
+class Assignment : public Instruction {
+
+public:
+	Assignment(Variable * var, int operation);
+
+	int operation;
+	Variable * variable;
 
 };
 

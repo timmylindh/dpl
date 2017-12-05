@@ -32,6 +32,9 @@ public:
 	// return 0 if it does not exist
 	Variable * get_variable(std::string name);
 
+	// Add variable [name] to the current program
+	void push_variable(Variable * var);
+
 	// Get the next instruction
 	Instruction * get_next_instruction();
 
