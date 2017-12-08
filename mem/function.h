@@ -19,11 +19,14 @@ public:
 	Function(Program * parent_program);
 
 	// The name of the function
-	char * name;
+	const char * name;
 
 	// Get the next argument in argument vector
 	// return 0 if last
 	Argument * get_next_argument();
+
+	// Push an argument to arguments vector
+	void push_argument(Argument * argument);
 
 	// Check if the function has a certain return type
 	// return 0 if not

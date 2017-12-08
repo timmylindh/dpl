@@ -17,7 +17,7 @@ Variable::Variable(const char * name, std::vector<Token *> * value, int type) {
 }
 
 // Initialize a new argument
-Argument::Argument(char * name, std::vector<Token *> * value, int type)
+Argument::Argument(const char * name, std::vector<Token *> * value, int type)
 : Variable(name, value, type) {
 
 	this->default_value = NULL;

@@ -33,7 +33,7 @@ public:
 class Argument : public Variable {
 
 public:
-	Argument(char * name, std::vector<Token *> * value, int type);
+	Argument(const char * name, std::vector<Token *> * value, int type);
 
 	// Default value for argument
 	std::vector<Token *> * default_value;

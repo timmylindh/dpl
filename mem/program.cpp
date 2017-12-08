@@ -58,3 +58,9 @@ Function * GlobalProgram::get_function(std::string name) {
 Function * GlobalProgram::get_function(char * name) {
 	return get_function(std::string(name));
 }
+
+// Push a function to the function map
+// [name] variable to prevent error because of forward declaration
+void GlobalProgram::push_function(const char * name, Function * function) {
+	functions->insert(std::pair<std::string, Function *>(std::string(name), function));
+}

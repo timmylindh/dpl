@@ -62,6 +62,9 @@ public:
 	Function * get_function(std::string name);
 	Function * get_function(char * name);
 
+	// Push a function to the function map
+	void push_function(const char * name, Function * function);
+
 private:
 
 	// Defines a set of functions

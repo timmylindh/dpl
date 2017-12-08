@@ -26,6 +26,11 @@ Argument * Function::get_next_argument() {
 	return arguments->at(args_index++);
 }
 
+// Push an argument to the arguments vector
+void Function::push_argument(Argument * argument) {
+	arguments->push_back(argument);
+}
+
 // Determine whether a function has a certain return type or not
 // return 0 if not
 int Function::check_return_type(int type) {

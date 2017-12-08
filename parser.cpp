@@ -37,7 +37,7 @@ void Parser::parse(Program * program) {
 	this->program = program;
 	tok = lexer->next_token();
 
-	while(tok->type != TOK_NULL) {
+	while(tok->type != TOK_NULL && tok->type != TOK_RIGHT_CBRACK) {
 		// Entry points for keywords and instructions
 		switch(tok->type) {
 
@@ -48,13 +48,20 @@ void Parser::parse(Program * program) {
 			name = tok->value;
 			tok = lexer->next_token();
 
-			// Assignment operation
-			if(IS_ASSIGNMENT(tok->type)) {
-				parse_assignment_operation(name, tok->type);
+			// Function call
+			if(tok->type == TOK_LEFT_PAR) {
+				parse_function_call(name);
 			}
 
-			// Function call
-			else if(tok->type == TOK_RIGHT_PAR);
+			// Function definition
+			else if(tok->type == TOK_COLON) {
+				parse_function_definition(name);
+			}
+
+			// Assignment operation
+			else if(IS_ASSIGNMENT(tok->type)) {
+				parse_assignment_operation(name, tok->type);
+			}
 
 			break;
 
@@ -102,7 +109,7 @@ void Parser::parse_assignment_operation(const char * name, int assign_type) {
 
 // Convert infix expression to postfix expression for convenience
 // and determine the type of the expression
-std::vector<Token *> * Parser::parse_expression(int &type) {
+std::vector<Token *> * Parser::parse_expression(int &type, int tok_delim) {
 	Token * tok;
 	std::stack<Token *> op_stack;
 	std::vector<Token *> * expression;
@@ -120,7 +127,7 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 	// Loop through tokens until dot or end of line
 	tok = lexer->next_token();
 
-	while(tok->type != TOK_DOT && tok->type != TOK_COMMA && tok->type != TOK_NULL) {
+	while(tok->type != TOK_NULL && tok->type != tok_delim) {
 
 		// Numeric operand
 		if(tok->type == TOK_INT || tok->type == TOK_FLOAT) {
@@ -157,6 +164,7 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 					type = func->get_return_type();
 
 				expression->push_back(new Token((char * const) "@", TOK_AT));
+				tok = lexer->next_token();
 			}
 
 			// Variable
@@ -181,8 +189,9 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 			continue;
 		}
 
-		else if(tok->type == TOK_LEFT_PAR)
+		else if(tok->type == TOK_LEFT_PAR) {
 			op_stack.push(tok);
+		}
 
 		else if(tok->type == TOK_RIGHT_PAR) {
 			Token * op;
@@ -195,8 +204,9 @@ std::vector<Token *> * Parser::parse_expression(int &type) {
 			}
 
 			// Matching paranthesis
-			if(op != NULL && op->type == TOK_LEFT_PAR)
+			if(op != NULL && op->type == TOK_LEFT_PAR) {
 				op_stack.pop();
+			}
 
 			else
 				ERROR(T_CRIT, "faulty expression on line %d", lexer->n_lines);
@@ -254,6 +264,8 @@ Function * Parser::parse_function_call(const char * func_name) {
 		ERROR(T_CRIT, "unknown call to function %s, on line %d.", func_name, lexer->n_lines);
 
 	// Get function arguments
+	lexer->next_token();
+
 	while(lexer->last_token->type != TOK_RIGHT_PAR && lexer->last_token->type != TOK_NULL) {
 		auto arg = func->get_next_argument();
 		int type;
@@ -262,7 +274,7 @@ Function * Parser::parse_function_call(const char * func_name) {
 		if(! arg)
 			ERROR(T_CRIT, "unknown argument %s in call to function %s, on line %d.", lexer->last_token->value, func_name, lexer->n_lines);
 
-		arg->value = parse_expression(type);
+		arg->value = parse_expression(type, TOK_COMMA);
 		arg->type = type;
 	}
 
@@ -273,6 +285,97 @@ Function * Parser::parse_function_call(const char * func_name) {
 	// Push function call to program instruction queue
 	program->push_instruction(new FunctionCall(func));
 	return func;
+}
+
+// Parse a function definition with name [name]
+// error will occur if function does already exist
+// return pointer to function
+Function * Parser::parse_function_definition(const char * func_name) {
+	Function * function;
+
+	if(global_program->get_function(func_name))
+		ERROR(T_CRIT, "redefinition of function %s on line %d.", func_name, lexer->n_lines);
+
+	function = new Function(program);
+	function->name = func_name;
+
+	lexer->next_token();
+
+	if(lexer->last_token->type != TOK_LEFT_PAR)
+		ERROR(T_CRIT, "unexpected %s on line %d.", lexer->last_token->value, lexer->n_lines);
+
+	// Parse arguments
+	lexer->next_token();
+
+	const char * var_name;
+	int default_value_type;
+	std::vector<Token *> * default_value;
+
+	var_name = NULL;
+	default_value = NULL;
+	default_value_type = TOK_NULL;
+
+	while(lexer->last_token->type != TOK_RIGHT_PAR && lexer->last_token->type != TOK_NULL) {
+
+
+		// Add variable to function
+		if(lexer->last_token->type == TOK_COMMA) {
+			Argument * argument = new Argument(var_name, default_value, default_value_type);
+
+			var_name = NULL;
+			default_value = NULL;
+			default_value_type = TOK_NULL;
+
+			// Add argument to function
+			function->push_argument(argument);
+		}
+
+		// Set default value for argument
+		else if(lexer->last_token->type == TOK_EQUAL) {
+			default_value = new std::vector<Token *>;
+			default_value->push_back(lexer->next_token());
+		}
+
+		// Argument
+		else if(lexer->last_token->type == TOK_NAME && var_name == NULL) {
+			var_name = lexer->last_token->value;
+		}
+
+		else
+			ERROR(T_CRIT, "unexpected %s on line %d.", lexer->last_token->value, lexer->n_lines);
+
+		lexer->next_token();
+	}
+
+	if(lexer->last_token->type == TOK_NULL)
+		ERROR(T_CRIT, "no ending delimiter for argument list of function %s on line %d.", func_name, lexer->n_lines);
+
+	// Push last argument to function
+	Argument * argument = new Argument(var_name, default_value, default_value_type);
+	function->push_argument(argument);
+
+	lexer->next_token();
+	if(lexer->last_token->type != TOK_IMPLIES)
+		ERROR(T_CRIT, "unexpected %s on line %d.", lexer->last_token->value, lexer->n_lines);
+
+	lexer->next_token();
+	if(lexer->last_token->type != TOK_LEFT_CBRACK)
+		ERROR(T_CRIT, "function definition requries a { } block, function %s on line %d.", func_name, lexer->n_lines);
+
+	// Call parse recursevily to parse function instructions
+	// Save current program to restore it after parsing
+	Program * current = program;
+	parse(function);
+	program = current;
+
+	// No ending curly bracket
+	if(lexer->last_token->type == TOK_NULL)
+		ERROR(T_CRIT, "unexpected end of function %s, missing '}' on line %d.", func_name, lexer->n_lines);
+
+	// Push function to program
+	global_program->push_function(func_name, function);
+
+	return function;
 }
 
 // Calls the main parse function with the global program as argument
