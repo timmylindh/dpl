@@ -49,6 +49,13 @@ Lexer::Lexer() {
 	symbols["."] = TOK_DOT;
 	symbols[":"] = TOK_COLON;
 	symbols[","] = TOK_COMMA;
+
+	symbols["&"] = TOK_PLACE;
+	symbols["&&"] = TOK_AND;
+	symbols["||"] = TOK_OR;
+
+	// Initialize keywords map
+	keywords["ret"] = TOK_RETURN;
 }
 
 // Returns the next token in input buffer

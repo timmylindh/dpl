@@ -44,6 +44,9 @@ private:
 	// Convert infix expression to postfix expression
 	std::vector<Token *> * parse_expression(int &type, int tok_delim = TOK_DOT);
 
+	// Convert infix logical expression to postfix expression
+	std::vector<Token *> * parse_logical_expression(int tok_delim);
+
 	// Parse a call for a function with name [name]
 	// return a pointer to the function itself
 	Function * parse_function_call(const char * func_name);
@@ -52,6 +55,11 @@ private:
 	// return a pointer to the fuction itself
 	Function * parse_function_definition(const char * func_name);
 
+	// Parse a return operation
+	void parse_return_operation();
+
+	// Parse an if statement
+	void parse_if_statement();
 };
 
 #endif /* PARSER_H_ */

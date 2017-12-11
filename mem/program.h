@@ -14,6 +14,9 @@
 #include "variable.h"
 #include "instruction.h"
 
+#define PROGRAM_FUNCTION 1
+#define PROGRAM_GLOBAL 2
+
 class Function;
 
 class Program {
@@ -21,12 +24,13 @@ class Program {
 public:
 
 	// Initializor, pass the parent program as parameter
-	Program(Program * parent_program);
+	Program(Program * parent_program, const int program_type = PROGRAM_GLOBAL);
 
 	/*
 	 * Defines the parent program, for instance the main program for a global function
 	 */
 	Program * parent_program;
+	const int program_type;
 
 	// Get the variable [name] in current program
 	// return 0 if it does not exist

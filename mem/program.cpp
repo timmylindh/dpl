@@ -8,9 +8,9 @@
 #include "program.h"
 
 // Initialize a new program
-Program::Program(Program * parent_program) {
+Program::Program(Program * parent_program, const int program_type)
+: program_type(program_type) {
 	this->parent_program = parent_program;
-
 	this->variables = new std::unordered_map<std::string, Variable *>();
 	this->instructions = new std::queue<Instruction *>();
 }
@@ -25,10 +25,21 @@ void Program::push_instruction(Instruction * instruction) {
 Variable * Program::get_variable(std::string name) {
 	std::unordered_map<std::string, Variable *>::iterator it;
 
-	if((it = variables->find(name)) == variables->end())
-		return 0;
+	// Search local scope
+	if((it = variables->find(name)) != variables->end())
+		return it->second;
 
-	return it->second;
+	// Search global scope
+	Program * scope;
+	scope = this;
+
+	while(scope != NULL && scope->program_type != PROGRAM_GLOBAL)
+		scope = scope->parent_program;
+
+	if((it = scope->variables->find(name)) != scope->variables->end())
+		return it->second;
+
+	return 0;
 }
 
 // Add variable [name] to current program
@@ -37,7 +48,7 @@ void Program::push_variable(Variable * var) {
 }
 
 // Initialize a new global program
-GlobalProgram::GlobalProgram() : Program(NULL) {
+GlobalProgram::GlobalProgram() : Program(NULL, PROGRAM_GLOBAL) {
 	this->functions = new std::unordered_map<std::string, Function *>();
 }
 

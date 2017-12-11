@@ -57,11 +57,19 @@
 
 #define TOK_AT 33
 
+#define TOK_AND 34
+#define TOK_OR 35
+
+#define TOK_RETURN 36
+
 // Whether token is of assignment type
 #define IS_ASSIGNMENT(type) (type == TOK_EQUAL)
 
 // Whether token is of operator type
 #define IS_OPERATOR(type) (type == TOK_PLUS || type == TOK_MINUS || type == TOK_MULT || type == TOK_DIV)
+
+// Whether token is a comparison operator
+#define IS_COMPARISON(type) (type == TOK_LESSER || type == TOK_GREATER || type == TOK_GREATER_EQUAL || type == TOK_LESSER_EQUAL || type == TOK_EQUAL_EQUAL)
 
 // Defines a single token
 class Token {

@@ -55,6 +55,9 @@ void Parser::parse(Program * program) {
 
 			// Function definition
 			else if(tok->type == TOK_COLON) {
+				if(program != global_program)
+					ERROR(T_CRIT, "function definitions may only occur in the global scope, on line %d.", lexer->n_lines);
+
 				parse_function_definition(name);
 			}
 
@@ -63,10 +66,18 @@ void Parser::parse(Program * program) {
 				parse_assignment_operation(name, tok->type);
 			}
 
+			// Unknown
+			else {
+				ERROR(T_CRIT, "unknown token %s on line %d.", name, lexer->n_lines);
+			}
+
 			break;
 
 		// If or else if
 		case TOK_IF:
+			parse_if_statement();
+			break;
+
 		case TOK_ELSE_IF:
 			break;
 
@@ -78,6 +89,16 @@ void Parser::parse(Program * program) {
 		case TOK_UNI_QUANT:
 			break;
 
+		// Return statement
+		case TOK_RETURN:
+			if(program->program_type != PROGRAM_FUNCTION)
+				ERROR(T_CRIT, "return statements may only be used inside functions, on line %d.", lexer->n_lines);
+
+			parse_return_operation();
+			break;
+
+		default:
+			break;
 		}
 
 		tok = lexer->next_token();
@@ -250,6 +271,179 @@ std::vector<Token *> * Parser::parse_expression(int &type, int tok_delim) {
 	return expression;
 }
 
+// Parse a logical expression and return the associated tokens in postfix
+// notation
+std::vector<Token *> * Parser::parse_logical_expression(int tok_delim) {
+	Token * tok;
+	int last_type, comparison;
+	std::vector<Token *> * expression;
+	std::stack<Token *> op_stack;
+	std::unordered_map<int, int> operators;
+
+	operators[TOK_GREATER] = 4;
+	operators[TOK_LESSER] = 4;
+	operators[TOK_GREATER_EQUAL] = 4;
+	operators[TOK_LESSER_EQUAL] = 4;
+	operators[TOK_AND] = 3;
+	operators[TOK_OR] = 2;
+	operators[TOK_LEFT_PAR] = 1;
+
+	expression = new std::vector<Token *>;
+	last_type = TOK_NULL;
+	comparison = 0;
+
+	tok = lexer->next_token();
+
+	// Loop through expression token by token
+	while(tok->type != TOK_NULL && tok->type != tok_delim) {
+
+		// Whether the comparsion flag is set, make sure types are comparable
+		if(comparison) {
+			if(tok->type != TOK_NAME && last_type != tok->type) {
+				ERROR(T_CRIT, "comparison of different types, on line %d", lexer->n_lines);
+			}
+
+			else if(tok->type != TOK_NAME)
+				comparison = 0;
+		}
+
+		// Numeric operand
+		if(tok->type == TOK_INT || tok->type == TOK_FLOAT) {
+			if(tok->type == TOK_FLOAT)
+				last_type = TOK_FLOAT;
+			else
+				last_type = TOK_INT;
+
+			expression->push_back(tok);
+		}
+
+		// String operand
+		else if(tok->type == TOK_STRING) {
+			last_type = TOK_STRING;
+			expression->push_back(tok);
+		}
+
+		// Function or variable operand
+		else if(tok->type == TOK_NAME) {
+			Token * name = tok;
+			int last_type_cp;
+
+			last_type_cp = last_type;
+			tok = lexer->next_token();
+
+			// Function
+			if(tok->type == TOK_LEFT_PAR) {
+				auto func = parse_function_call(name->value);
+				last_type = func->get_return_type();
+
+				expression->push_back(new Token((char * const) "@", TOK_AT));
+				tok = lexer->next_token();
+			}
+
+			// Variable
+			else {
+				auto var = program->get_variable(name->value);
+
+				// Determine if variable exists
+				if(! var)
+					ERROR(T_CRIT, "undefined variable %s on line %d.", name->value, lexer->n_lines);
+
+				// Determine variable type
+				last_type = var->type;
+				std::cout << var->type << std::endl;
+			}
+
+			// Whether the comparsion flag is set, make sure types are comparable
+			if(comparison) {
+				if(last_type != last_type_cp)
+					ERROR(T_CRIT, "comparison of different types, on line %d", lexer->n_lines);
+
+				comparison = 0;
+			}
+
+			expression->push_back(name);
+			continue;
+		}
+
+		else if(tok->type == TOK_LEFT_PAR) {
+			op_stack.push(tok);
+		}
+
+		else if(tok->type == TOK_RIGHT_PAR) {
+			Token * op;
+			op = NULL;
+
+			// Pop stack until corresponding left paranthesis is found
+			while((! op_stack.empty()) && (op = op_stack.top())->type != TOK_LEFT_PAR) {
+				expression->push_back(op);
+				op_stack.pop();
+			}
+
+			// Matching paranthesis
+			if(op != NULL && op->type == TOK_LEFT_PAR) {
+				op_stack.pop();
+			}
+
+			else
+				ERROR(T_CRIT, "faulty expression on line %d", lexer->n_lines);
+
+		}
+
+		// Comparison operator
+		else if(IS_COMPARISON(tok->type)) {
+			Token * op;
+			int prec;
+
+			comparison = 1;
+			op = NULL;
+			prec = operators[tok->type];
+
+			// Add operators with higher precedence
+			while(! op_stack.empty() && prec <= operators[(op = op_stack.top())->type]) {
+				expression->push_back(op);
+				op_stack.pop();
+			}
+
+			op_stack.push(tok);
+		}
+
+		// Logical and or or
+		else if(tok->type == TOK_AND || tok->type == TOK_OR) {
+			Token * op;
+			int prec;
+
+			op = NULL;
+			prec = operators[tok->type];
+
+			// Add operators with higher precedence
+			while(! op_stack.empty() && prec <= operators[(op = op_stack.top())->type]) {
+				expression->push_back(op);
+				op_stack.pop();
+			}
+
+			op_stack.push(tok);
+		}
+
+		// Invalid token
+		else
+			ERROR(T_CRIT, "unexpected '%s' on line %d", tok->value, lexer->n_lines);
+
+		tok = lexer->next_token();
+	}
+
+	// Check if no ending delimiter
+	if(tok->type == TOK_NULL)
+		ERROR(T_CRIT, "unexpected end of file on line %d", lexer->n_lines);
+
+	// Add remaining operators to expression
+	while(! op_stack.empty()) {
+		expression->push_back(op_stack.top());
+		op_stack.pop();
+	}
+
+	return expression;
+}
+
 /* Parse a call to a function, output an error if function for some reason
  * does not exist or have matches with arguments
  */
@@ -376,6 +570,53 @@ Function * Parser::parse_function_definition(const char * func_name) {
 	global_program->push_function(func_name, function);
 
 	return function;
+}
+
+// Parse an if statement
+// Create an if instruction and push it to the current program
+void Parser::parse_if_statement() {
+	std::vector<Token *> * expression;
+
+	// Get logical expression
+	expression = parse_logical_expression(TOK_IMPLIES);
+
+	lexer->next_token();
+	if(lexer->last_token->type != TOK_LEFT_CBRACK)
+		ERROR(T_CRIT, "code execution definition requries a { } block, if statement on line %d.", lexer->n_lines);
+
+	// Call parse recursevily to parse code block instructions
+	// Save current program to restore it after parsing
+	Program * if_program = new Program(program);
+	Program * current = program;
+
+	parse(if_program);
+	program = current;
+
+	// No ending curly bracket
+	if(lexer->last_token->type != TOK_RIGHT_CBRACK)
+		ERROR(T_CRIT, "unexpected end of code block, missing '}' on line %d.", lexer->n_lines);
+
+	// Push instruction to program
+	IfStatement * if_statement = new IfStatement(expression, if_program);
+
+	program->push_instruction(if_statement);
+}
+
+// Parse a return operation and set the corresponding
+// return type of the function
+void Parser::parse_return_operation() {
+	int type;
+	std::vector<Token *> * value;
+
+	// Get and set the return value
+	value = parse_expression(type);
+
+	Function * func = static_cast<Function *>(program);
+	func->set_return_type(type);
+
+	// Push instruction to current program
+	ReturnOperation * return_op = new ReturnOperation(value);
+	func->push_instruction(return_op);
 }
 
 // Calls the main parse function with the global program as argument

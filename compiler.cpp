@@ -19,6 +19,8 @@ Compiler::Compiler() {
 
 	this->parser = new Parser();
 	this->buffer = NULL;
+	this->program = NULL;
+
 }
 
 Compiler::~Compiler() {

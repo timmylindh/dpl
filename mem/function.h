@@ -35,6 +35,9 @@ public:
 	// Returns the first return type
 	int get_return_type();
 
+	// Set the return type
+	void set_return_type(int type);
+
 private:
 	// The arguments that the function takes
 	std::vector<Argument *> * arguments;

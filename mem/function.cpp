@@ -7,7 +7,7 @@
 
 #include "function.h"
 
-Function::Function(Program * parent_program) : Program(parent_program) {
+Function::Function(Program * parent_program) : Program(parent_program, PROGRAM_FUNCTION) {
 
 	this->name = NULL;
 	this->arguments = new std::vector<Argument *>;
@@ -43,4 +43,9 @@ int Function::check_return_type(int type) {
 // Returns the first return type
 int Function::get_return_type() {
 	return return_types->begin()->first;
+}
+
+// Set the return type
+void Function::set_return_type(int type) {
+	return_types->insert(std::pair<int, void *>(type, NULL));
 }
