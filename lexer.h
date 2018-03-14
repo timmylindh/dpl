@@ -61,6 +61,13 @@
 #define TOK_OR 35
 
 #define TOK_RETURN 36
+#define TOK_SHORT_COM 37
+
+#define TOK_AUTO 38
+#define TOK_SEMI_COLON 39
+#define TOK_QUOTE 40
+#define TOK_DOUBLE_COLON 40
+#define TOK_LEFT_SHIFT 41
 
 // Whether token is of assignment type
 #define IS_ASSIGNMENT(type) (type == TOK_EQUAL)

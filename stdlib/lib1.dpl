@@ -1,0 +1,11 @@
+// DPL - Default library
+// Timmy L, 2018
+
+// Default print function
+print : (str) --> {
+	
+	@ {
+		std::cout << str << std::endl;
+	}
+	
+}

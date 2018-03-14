@@ -19,6 +19,7 @@ class Program;
 #define TYPE_ASSIGNMENT 2
 #define TYPE_IF_STATEMENT 3
 #define TYPE_RETURN 4
+#define TYPE_INLINE_INJECTION 5
 
 class Instruction {
 
@@ -36,8 +37,19 @@ class FunctionCall : public Instruction {
 public:
 	FunctionCall(Function * function);
 
+	// Push an argument into the arguments vector
+	void push_argument(std::vector<Token *> * argument);
+
+	// Get next argument value in the arguments vector
+	std::vector<Token *> * get_next_argument();
+
 	// The function assoiciated with the instruction
 	Function * function;
+
+private:
+
+	// The arguments assoiciated with the call
+	std::vector<std::vector<Token *> *> * arguments;
 
 };
 
@@ -72,4 +84,15 @@ public:
 	std::vector<Token *> * value;
 
 };
+
+// Inline C/C++ code injection
+class InlineInjection : public Instruction {
+
+public:
+	InlineInjection(std::vector<Token *> * code);
+
+	std::vector<Token *> * code;
+
+};
+
 #endif /* MEM_INSTRUCTION_H_ */

@@ -22,8 +22,16 @@ public:
 	const char * name;
 
 	// Get the next argument in argument vector
-	// return 0 if last
+	// return to index 0 after last
 	Argument * get_next_argument();
+
+	// Return the size of arguments
+	int get_arguments_size();
+
+	// Get the variable [name] in current program
+	// return 0 if it does not exist
+	// also checks the arguments
+	Variable * get_variable(std::string name);
 
 	// Push an argument to arguments vector
 	void push_argument(Argument * argument);
@@ -42,8 +50,8 @@ private:
 	// The arguments that the function takes
 	std::vector<Argument *> * arguments;
 
-	// The possible return types of the function
-	std::map<int, void *> * return_types;
+	// The possible return type of the function
+	int return_type;
 
 	// Arguments index
 	int args_index;

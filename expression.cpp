@@ -25,7 +25,7 @@ namespace expr {
 
 		// Loop through tokens
 		for(auto token : tokens) {
-			std::cout << token->value;
+			std::cerr << token->value;
 		}
 	}
 

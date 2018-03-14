@@ -10,6 +10,7 @@
 
 #include "parser.h"
 #include "mem/program.h"
+#include "translator.h"
 
 class Compiler {
 
@@ -20,8 +21,12 @@ public:
 	// Called to compile a source dpl file
 	int compile(char * file_name);
 
+	// Line start
+	int line_start = 0;
+
 private:
 	Parser * parser;
+	Translator * translator;
 	char * buffer;
 
 	// Main program

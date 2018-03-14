@@ -42,17 +42,23 @@ Lexer::Lexer() {
 	symbols["<="] = TOK_LESSER_EQUAL;
 	symbols["="] = TOK_EQUAL;
 	symbols["=="] = TOK_EQUAL_EQUAL;
+	symbols["<<"] = TOK_LEFT_SHIFT;
 
 	symbols["?"] = TOK_IF;
 	symbols["|?"] = TOK_ELSE_IF;
 
 	symbols["."] = TOK_DOT;
 	symbols[":"] = TOK_COLON;
+	symbols["::"] = TOK_DOUBLE_COLON;
 	symbols[","] = TOK_COMMA;
+	symbols[";"] = TOK_SEMI_COLON;
 
 	symbols["&"] = TOK_PLACE;
 	symbols["&&"] = TOK_AND;
 	symbols["||"] = TOK_OR;
+	symbols["//"] = TOK_SHORT_COM;
+	symbols["@"] = TOK_AT;
+	symbols["\""] = TOK_QUOTE;
 
 	// Initialize keywords map
 	keywords["ret"] = TOK_RETURN;
@@ -65,12 +71,6 @@ Token * Lexer::next_token() {
 
 	type = TOK_NULL;
 
-	// End of code
-	if(*pt == '\0') {
-		value = new std::string;
-		return new Token(value, type);
-	}
-
 	// Skip spaces
 	while(isspace(*pt)) {
 		if(*pt == '\n')
@@ -78,6 +78,10 @@ Token * Lexer::next_token() {
 
 		pt++;
 	}
+
+	// End of code
+	if(*pt == '\0')
+		return new Token(new std::string, type);
 
 	// Integer or float
 	if(isdigit(*pt))
@@ -181,6 +185,12 @@ std::string * Lexer::get_symbol(int &type) {
 	// No match
 	if(type == TOK_NULL)
 		ERROR(T_CRIT, "unknown symbol %s, on line %d.", search.c_str(), n_lines);
+
+	// Comment
+	if(type == TOK_SHORT_COM) {
+		while(*pt != '\n' && *pt != '\0')
+			pt++;
+	}
 
 	return new std::string(it->first);
 }

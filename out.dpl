@@ -1,0 +1,12 @@
+// DPL - Default library
+// Timmy L, 2018
+
+// Default print function
+print : (str) --> {
+	
+	@ {
+		printf("%s", str);
+	}
+	
+}
+print("Hello").

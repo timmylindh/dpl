@@ -42,20 +42,32 @@ Variable * Program::get_variable(std::string name) {
 	return 0;
 }
 
+
 // Add variable [name] to current program
 void Program::push_variable(Variable * var) {
 	variables->insert(std::pair<std::string, Variable *>(std::string(var->name), var));
 }
 
+// Get the next instruction of the instructions queue
+Instruction * Program::get_next_instruction() {
+	if(instructions->empty())
+		return 0;
+
+	Instruction * in = instructions->front();
+	instructions->pop();
+
+	return in;
+}
+
 // Initialize a new global program
 GlobalProgram::GlobalProgram() : Program(NULL, PROGRAM_GLOBAL) {
-	this->functions = new std::unordered_map<std::string, Function *>();
+	this->functions = new std::map<std::string, Function *>();
 }
 
 // Get the function in global program with [name]
 // return 0 on error or if function could not be found within scope
 Function * GlobalProgram::get_function(std::string name) {
-	std::unordered_map<std::string, Function *>::iterator it;
+	std::map<std::string, Function *>::iterator it;
 
 	it = functions->find(name);
 

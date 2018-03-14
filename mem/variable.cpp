@@ -21,6 +21,6 @@ Argument::Argument(const char * name, std::vector<Token *> * value, int type)
 : Variable(name, value, type) {
 
 	this->default_value = NULL;
-	this->default_type = 0;
+	this->default_type = type;
 
 }

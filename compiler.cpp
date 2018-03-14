@@ -18,6 +18,7 @@
 Compiler::Compiler() {
 
 	this->parser = new Parser();
+	this->translator = new Translator();
 	this->buffer = NULL;
 	this->program = NULL;
 
@@ -30,16 +31,20 @@ Compiler::~Compiler() {
 // Compile a file specified by the argument
 int Compiler::compile(char * file_name) {
 	try {
+		// Fetch code file
 		this->buffer = this->read_file(file_name);
 	} catch(int e) {
 		ERROR(T_CRIT, "failed to read from file %s.", file_name);
 	}
 
-	std::cout << "INPUT:\n" << this->buffer << std::endl;
+	std::cerr << "INFO:\n" << std::endl;
 
 	// Pass buffer to parser and parse the file
+	this->parser->set_line_start(this->line_start);
 	this->parser->set_input_code(this->buffer);
 	program = this->parser->parse();
+
+	translator->translate(program);
 
 	return 1;
 }

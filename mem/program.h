@@ -8,7 +8,7 @@
 #ifndef MEM_PROGRAM_H_
 #define MEM_PROGRAM_H_
 
-#include <unordered_map>
+#include <map>
 #include <queue>
 
 #include "variable.h"
@@ -32,9 +32,12 @@ public:
 	Program * parent_program;
 	const int program_type;
 
+	// Defines a set of variables in the current program scope
+	std::unordered_map<std::string, Variable *> * variables;
+
 	// Get the variable [name] in current program
 	// return 0 if it does not exist
-	Variable * get_variable(std::string name);
+	virtual Variable * get_variable(std::string name);
 
 	// Add variable [name] to the current program
 	void push_variable(Variable * var);
@@ -47,9 +50,6 @@ public:
 
 private:
 
-	// Defines a set of variables in the current program scope
-	std::unordered_map<std::string, Variable *> * variables;
-
 	// Defines a set of instructions following the FIFO format
 	std::queue<Instruction *> * instructions;
 
@@ -61,6 +61,9 @@ class GlobalProgram : public Program {
 public:
 	GlobalProgram();
 
+	// Defines a set of functions
+	std::map<std::string, Function *> * functions;
+
 	// Get the function in global program with [name]
 	// return 0 if no function was found
 	Function * get_function(std::string name);
@@ -69,10 +72,8 @@ public:
 	// Push a function to the function map
 	void push_function(const char * name, Function * function);
 
-private:
 
-	// Defines a set of functions
-	std::unordered_map<std::string, Function *> * functions;
+private:
 
 };
 #endif /* MEM_PROGRAM_H_ */
